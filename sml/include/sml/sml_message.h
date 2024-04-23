@@ -73,6 +73,9 @@ typedef struct {
 	u8 *abort_on_error;
 	sml_message_body *message_body;
 	u16 *crc;
+	// @N2G : add raw data ptr for CRC calc
+	u8 *pdata;
+	u16 len;
 	/* end of message */
 } sml_message;
 

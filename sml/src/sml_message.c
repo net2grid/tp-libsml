@@ -26,6 +26,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <inttypes.h>
 
 // sml_message;
 
@@ -38,6 +39,9 @@ sml_message *sml_message_parse(sml_buffer *buf) {
 						 .crc = NULL};
 	int msg_start = buf->cursor;
 	int len;
+	
+	// @N2G : set raw data ptr for CRC
+	msg->pdata = &buf->buffer[msg_start];
 
 	if (sml_buf_get_next_type(buf) != SML_TYPE_LIST) {
 		buf->error = 1;
@@ -64,6 +68,9 @@ sml_message *sml_message_parse(sml_buffer *buf) {
 	msg->message_body = sml_message_body_parse(buf);
 	if (sml_buf_has_errors(buf))
 		goto error;
+		
+	// @N2G : set raw data len for CRC
+	msg->len = &buf->buffer[buf->cursor] - msg->pdata;
 
 	len = buf->cursor - msg_start;
 	if ((buf->buffer_len - buf->cursor) < 3) {
@@ -213,7 +220,7 @@ sml_message_body *sml_message_body_parse(sml_buffer *buf) {
 		msg_body->data = sml_attention_response_parse(buf);
 		break;
 	default:
-		fprintf(stderr, "libsml: error: message type %04X not yet implemented\n", *(msg_body->tag));
+		fprintf(stderr, "libsml: error: message type %04"PRIx32" not yet implemented\n", *(msg_body->tag));
 		break;
 	}
 
@@ -283,7 +290,7 @@ void sml_message_body_write(sml_message_body *message_body, sml_buffer *buf) {
 		sml_attention_response_write((sml_attention_response *)message_body->data, buf);
 		break;
 	default:
-		fprintf(stderr, "libsml: error: message type %04X not yet implemented\n",
+		fprintf(stderr, "libsml: error: message type %04"PRIx32" not yet implemented\n",
 				*(message_body->tag));
 		break;
 	}
@@ -338,7 +345,7 @@ void sml_message_body_free(sml_message_body *message_body) {
 			sml_attention_response_free((sml_attention_response *)message_body->data);
 			break;
 		default:
-			fprintf(stderr, "libsml: NYI: %s for message type %04X\n", __func__,
+			fprintf(stderr, "libsml: NYI: %s for message type %04"PRIx32"\n", __func__,
 					*(message_body->tag));
 			break;
 		}

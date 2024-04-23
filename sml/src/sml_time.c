@@ -20,6 +20,7 @@
 #include <sml/sml_shared.h>
 #include <sml/sml_time.h>
 #include <stdio.h>
+#include <inttypes.h>
 
 sml_time *sml_time_init() {
 	sml_time *t = (sml_time *)malloc(sizeof(sml_time));
@@ -97,7 +98,7 @@ sml_time *sml_time_parse(sml_buffer *buf) {
 		}
 		fprintf(
 			stderr,
-			"libsml: error: sml_time as list[3]: ignoring value[0]=%u value[1]=%d value[2]=%d\n",
+			"libsml: error: sml_time as list[3]: ignoring value[0]=%"PRIx32" value[1]=%d value[2]=%d\n",
 			t1 ? *t1 : 0, t2 ? *t2 : 0, t3 ? *t3 : 0);
 		if (t1)
 			sml_number_free(t1);

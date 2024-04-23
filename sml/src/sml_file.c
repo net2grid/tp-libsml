@@ -23,6 +23,7 @@
 #include <sml/sml_time.h>
 #include <stdio.h>
 #include <string.h>
+#include <inttypes.h>
 
 // EDL meter must provide at least 250 bytes as a receive buffer
 #define SML_FILE_BUFFER_LENGTH 512
@@ -110,6 +111,6 @@ void sml_file_print(sml_file *file) {
 
 	printf("SML file (%d SML messages, %zu bytes)\n", file->messages_len, file->buf->cursor);
 	for (i = 0; i < file->messages_len; i++) {
-		printf("SML message %4.X\n", *(file->messages[i]->message_body->tag));
+		printf("SML message %4."PRIx32"\n", *(file->messages[i]->message_body->tag));
 	}
 }
